@@ -1,6 +1,6 @@
 // Menyimpan "bingkai" aplikasi supaya tetap bisa dibuka (dan menampilkan pesan) saat internet putus.
 // Isi Monitor Kelas sendiri selalu diambil langsung dari Google, tidak disimpan di sini.
-const CACHE = 'ec-app-v1';
+const CACHE = 'ec-app-v2';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'ikon-192.png', 'ikon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

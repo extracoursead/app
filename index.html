@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ExtraCourse</title>
+<title>ExtraCourse Monitor</title>
 <meta name="description" content="Monitor Kelas dan Portal Keluarga ExtraCourse">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="ikon-192.png">
@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#111513" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ExtraCourse">
+<meta name="apple-mobile-web-app-title" content="ExtraCourse Monitor">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 :root{--bg:#f3f5f4;--card:#fff;--ink:#17201c;--muted:#66706b;--line:#e2e7e4;--accent:#1f6f4a;--accent-ink:#fff;--accent-soft:#e1f0e8}
@@ -94,14 +94,14 @@ function bilah(html, tombol) {
   $('#pasang').hidden = false;
 }
 if (!terpasang && qs) {
-  if (dalamApp) bilah('<b>Pasang aplikasi ExtraCourse</b>Buka link ini di ' + (iOS ? 'Safari' : 'Chrome') + ' dulu, lalu pasang dari sana.', false);
-  else if (iOS) bilah('<b>Pasang aplikasi ExtraCourse</b>Ketuk ' + IK_BAGI + ' <b style="display:inline">Bagikan</b>, lalu pilih <b style="display:inline">Tambah ke Layar Utama</b>.', false);
-  else if (android) bilah('<b>Pasang aplikasi ExtraCourse</b>Ketuk menu ⋮ di kanan atas, lalu pilih <b style="display:inline">Instal aplikasi</b> atau <b style="display:inline">Tambahkan ke layar utama</b>.', false);
+  if (dalamApp) bilah('<b>Pasang aplikasi ExtraCourse Monitor</b>Buka link ini di ' + (iOS ? 'Safari' : 'Chrome') + ' dulu, lalu pasang dari sana.', false);
+  else if (iOS) bilah('<b>Pasang aplikasi ExtraCourse Monitor</b>Ketuk ' + IK_BAGI + ' <b style="display:inline">Bagikan</b>, lalu pilih <b style="display:inline">Tambah ke Layar Utama</b>.', false);
+  else if (android) bilah('<b>Pasang aplikasi ExtraCourse Monitor</b>Ketuk menu ⋮ di kanan atas, lalu pilih <b style="display:inline">Instal aplikasi</b> atau <b style="display:inline">Tambahkan ke layar utama</b>.', false);
 }
 // Chrome/Edge: tombol "Pasang" langsung memunculkan jendela pemasangan
 addEventListener('beforeinstallprompt', ev => {
   ev.preventDefault(); ajakan = ev;
-  if (!terpasang && qs) bilah('<b>Pasang aplikasi ExtraCourse</b>Buka lebih cepat dari layar HP, tampil penuh tanpa kolom alamat.', true);
+  if (!terpasang && qs) bilah('<b>Pasang aplikasi ExtraCourse Monitor</b>Buka lebih cepat dari layar HP, tampil penuh tanpa kolom alamat.', true);
 });
 $('#pasangBtn').onclick = async () => {
   if (!ajakan) return;
