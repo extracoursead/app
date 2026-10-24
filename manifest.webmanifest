@@ -1,6 +1,6 @@
 {
   "name": "ExtraCourse Monitor",
-  "short_name": "ExtraCourse Monitor",
+  "short_name": "EC Monitor",
   "description": "Monitor Kelas dan Portal Keluarga ExtraCourse",
   "lang": "id",
   "scope": "./",
