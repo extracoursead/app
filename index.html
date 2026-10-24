@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ExtraCourse</title>
+<meta name="description" content="Monitor Kelas dan Portal Keluarga ExtraCourse">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="ikon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#f3f5f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111513" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ExtraCourse">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root{--bg:#f3f5f4;--card:#fff;--ink:#17201c;--muted:#66706b;--line:#e2e7e4;--accent:#1f6f4a;--accent-ink:#fff;--accent-soft:#e1f0e8}
+@media (prefers-color-scheme:dark){:root{--bg:#111513;--card:#1a201d;--ink:#e8ece9;--muted:#9aa49f;--line:#2b332f;--accent:#5cc493;--accent-ink:#0f1a14;--accent-soft:#1c3328}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{display:flex;flex-direction:column;height:100dvh;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);overflow:hidden}
+iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
+.logo{width:56px;height:56px;border-radius:16px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:22px;letter-spacing:-.5px}
+/* layar pembuka & pesan */
+.layar{position:fixed;inset:0;z-index:5;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
+.layar[hidden]{display:none}
+.layar p{margin:0;color:var(--muted);max-width:340px}
+.layar b{font-size:17px}
+.putar{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:putar .8s linear infinite}
+@keyframes putar{to{transform:rotate(360deg)}}
+/* bilah pasang aplikasi */
+.pasang{flex:none;display:flex;gap:12px;align-items:center;padding:10px 12px 10px 14px;background:var(--accent-soft);border-bottom:1px solid var(--line)}
+.pasang[hidden]{display:none}
+.pasang .logo{width:36px;height:36px;border-radius:10px;font-size:14px;flex:none}
+.pasang .tx{flex:1;min-width:0;font-size:13px;line-height:1.35}
+.pasang .tx b{display:block;font-size:14px}
+.btn{border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;font-size:14px;background:var(--accent);color:var(--accent-ink);cursor:pointer;flex:none}
+.x{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;padding:4px 6px;cursor:pointer;flex:none}
+.ik{display:inline-block;vertical-align:-3px;width:16px;height:16px}
+</style>
+</head>
+<body>
+<div class="pasang" id="pasang" hidden>
+  <div class="logo">EC</div>
+  <div class="tx" id="pasangTx"></div>
+  <button class="btn" id="pasangBtn" hidden>Pasang</button>
+  <button class="x" id="pasangX" aria-label="Tutup">×</button>
+</div>
+<iframe id="app" title="ExtraCourse" allow="camera; clipboard-write" hidden></iframe>
+<div class="layar" id="buka"><div class="logo">EC</div><div class="putar"></div></div>
+<div class="layar" id="pesan" hidden></div>
+<script>
+// Alamat resmi Monitor Kelas (link /exec). Isi halaman tetap dari sana, halaman ini hanya "bingkai" aplikasinya.
+const EXEC = 'https://script.google.com/macros/s/AKfycbxUysyhiK8ZIN0AGSS4633bQ8lk_WQQY4qi5wUmQ9jWb_jFU99rdCe2h76za23wX30BMA/exec';
+const KUNCI = ['k', 'f', 'tab', 'e', 'daftar'];
+const $ = s => document.querySelector(s);
+
+// Link pribadi (?k=... guru, ?f=... keluarga) disimpan supaya aplikasi tetap membuka halaman yang sama.
+const asal = new URLSearchParams(location.search), q = new URLSearchParams();
+KUNCI.forEach(n => { if (asal.has(n)) q.set(n, asal.get(n)); });
+let qs = q.toString();
+try { if (qs) localStorage.setItem('ec_app_q', qs); else qs = localStorage.getItem('ec_app_q') || ''; } catch (e) { /* abaikan */ }
+
+function tampilPesan(judul, isi) {
+  $('#buka').hidden = true;
+  $('#pesan').innerHTML = '<div class="logo">EC</div><b>' + judul + '</b><p>' + isi + '</p>';
+  $('#pesan').hidden = false;
+}
+if (!qs) {
+  tampilPesan('Buka dari link pribadi Anda', 'Halaman ini perlu dibuka dari link Monitor Kelas atau Portal Keluarga yang dikirim ExtraCourse lewat WhatsApp.');
+} else if (!navigator.onLine) {
+  tampilPesan('Tidak ada internet', 'Periksa sambungan internet, lalu buka lagi aplikasi ExtraCourse.');
+  addEventListener('online', () => location.reload(), { once: true });
+} else {
+  const fr = $('#app');
+  fr.onload = () => { $('#buka').hidden = true; fr.hidden = false; };
+  fr.src = EXEC + '?' + qs + '&app=1';
+  setTimeout(() => { $('#buka').hidden = true; fr.hidden = false; }, 15000);
+}
+
+/* ---------- ajakan memasang aplikasi (hanya bila dibuka dari browser, bukan dari ikon) ---------- */
+const terpasang = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const ua = navigator.userAgent;
+const iOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const android = /Android/.test(ua);
+const dalamApp = /FBAN|FBAV|Instagram|Line\/|; wv\)/.test(ua);   // browser bawaan WhatsApp/FB/IG
+const IK_BAGI = '<svg class="ik" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+let ajakan = null;
+
+function bilah(html, tombol) {
+  $('#pasangTx').innerHTML = html;
+  $('#pasangBtn').hidden = !tombol;
+  $('#pasang').hidden = false;
+}
+if (!terpasang && qs) {
+  if (dalamApp) bilah('<b>Pasang aplikasi ExtraCourse</b>Buka link ini di ' + (iOS ? 'Safari' : 'Chrome') + ' dulu, lalu pasang dari sana.', false);
+  else if (iOS) bilah('<b>Pasang aplikasi ExtraCourse</b>Ketuk ' + IK_BAGI + ' <b style="display:inline">Bagikan</b>, lalu pilih <b style="display:inline">Tambah ke Layar Utama</b>.', false);
+  else if (android) bilah('<b>Pasang aplikasi ExtraCourse</b>Ketuk menu ⋮ di kanan atas, lalu pilih <b style="display:inline">Instal aplikasi</b> atau <b style="display:inline">Tambahkan ke layar utama</b>.', false);
+}
+// Chrome/Edge: tombol "Pasang" langsung memunculkan jendela pemasangan
+addEventListener('beforeinstallprompt', ev => {
+  ev.preventDefault(); ajakan = ev;
+  if (!terpasang && qs) bilah('<b>Pasang aplikasi ExtraCourse</b>Buka lebih cepat dari layar HP, tampil penuh tanpa kolom alamat.', true);
+});
+$('#pasangBtn').onclick = async () => {
+  if (!ajakan) return;
+  ajakan.prompt();
+  await ajakan.userChoice.catch(() => {});
+  ajakan = null; $('#pasangBtn').hidden = true;
+};
+addEventListener('appinstalled', () => bilah('<b>Aplikasi sudah terpasang</b>Mulai sekarang buka ExtraCourse dari ikon di layar HP.', false));
+$('#pasangX').onclick = () => { $('#pasang').hidden = true; };
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
